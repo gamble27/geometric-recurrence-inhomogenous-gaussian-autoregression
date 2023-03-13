@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 def save_plot(
         name,
-        directory = "plots"
+        directory = "/home/olga/Projects/stochastiki/mc/plots_v2"
 ):
     """
     save current plot
@@ -43,7 +43,7 @@ def simulate_trajectory(X_0, N, gen_alpha, gen_sigma):
     return X
 
 
-def plot_trajectory(X, caption=""):
+def plot_trajectory(X: np.ndarray, caption=""):
     """
     plots given trajectory
     :param X:
@@ -53,6 +53,8 @@ def plot_trajectory(X, caption=""):
     n = np.array(range(X.shape[0]))
     fig, ax = plt.subplots()
     ax.plot(n, X)
+    # ax.set_xlim([xmin, xmax])
+    ax.set_ylim([X.min(), X.max()])
     ax.set_xlabel("n")
     ax.set_ylabel("Xn")
     ax.set_title(caption)
@@ -68,8 +70,9 @@ def get_return_time(X:np.array, c: float, return_n: int = 1):
     :return: return time
     """
     assert c > 0, "wrong arg"
+    Y = X[return_n:]
 
-    return np.array((-c <= X[return_n:]) * (X[return_n:] <= c)).argmax()
+    return np.array((-c <= Y) * (Y <= c)).argmax()
 
 def simulate_return_times_sample(
         n_samples,
@@ -266,8 +269,10 @@ def perform_experiment(
     )
     save_plot(f"{name}_single_trajectory_full")
 
+    lol = single_trajectory[0:single_return_time+2]
+    print(lol.shape)
     plot_trajectory(
-        single_trajectory[0:single_return_time+1],
+        single_trajectory[0:single_return_time+2],
         caption=f"Markov chain trajectory up to the hitting of [-{c};{c}]"
     )
     save_plot(f"{name}_single_trajectory_up_to_hitting")
